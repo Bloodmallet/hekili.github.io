@@ -1,23 +1,48 @@
 ---
+# Feel free to add content and custom Front Matter to this file.
+# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
+
 layout: default
 ---
 
-<div class="home">
+{%- if site.posts.size > 0 -%}
+    <h2 class="post-list-heading">{{ page.list_title | default: "Posts" }}</h2>
 
-  <h1 class="page-heading">Posts</h1>
+    <ul class="post-list">
+        <!-- adjusting the number of posts per page happens in _config.yml 'paginate: ' -->
+        {%- for post in paginator.posts -%}
+        {%- unless post.categories contains "guide" or post.categories contains "raids" or post.categories contains "dungeons" -%}
+        <li>
+            {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+            <span class="post-meta">{{ post.date | date: date_format }}</span>
+            <h3>
+            <a class="post-link" href="{{ post.url | relative_url }}">
+                {{ post.title | escape }}
+            </a>
+            </h3>
+            {%- if site.show_excerpts -%}
+            {{ post.excerpt | truncatewords:30 }}
+            {%- endif -%}
+        </li>
+        {%- endunless -%}
+        {%- endfor -%}
+    </ul>
 
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+    <!-- Pagination links -->
+    {%- if paginator.total_pages > 1 -%}
+        <div class="pagination">
+        {% if paginator.previous_page %}
+            <a href="{{ paginator.previous_page_path }}" class="previous">Previous</a>&nbsp;-&nbsp;
+        {% else %}
+            <!--<span class="previous">Previous&nbsp;-&nbsp;</span>-->
+        {% endif %}
+        <span class="page_number ">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
+        {% if paginator.next_page %}
+            &nbsp;-&nbsp;<a href="{{ paginator.next_page_path }}" class="next">Next</a>
+        {% else %}
+            <!--<span class="next ">&nbsp;-&nbsp;Next</span>-->
+        {% endif %}
+        </div>
+    {%- endif -%}
 
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-      </li>
-    {% endfor %}
-  </ul>
-
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
-
-</div>
+{%- endif -%}
